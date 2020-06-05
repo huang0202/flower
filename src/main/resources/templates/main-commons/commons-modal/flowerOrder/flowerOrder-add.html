@@ -1,0 +1,41 @@
+<div class="modal fade" id="flowerOrder-add" th:fragment="flowerOrder-addbar" xmlns:th="http://www.w3.org/1999/xhtml">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="padding: 8px 10px 10px 10px; margin-left: -10px;margin-right: 320px;margin-top: 2px;>"
+                    <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">供应记录</h4>
+            </div>
+            <div class="modal-body">
+
+                <div class="form-group">
+                    <label>花蕊名称:</label>
+                    <select id="order_flowerNameSelect" class="form-control">
+                    </select>
+                </div>
+
+                <div class="formgroup">
+                    <label>用户名:</label>
+                    <input id="order_username" type="text" class="form-control" name="num">
+                </div>
+
+                <div class="form-group">
+                    <label>购买数量:</label>
+                    <input id="order_num" type="text" class="form-control" name="num">
+                </div>
+
+                <div class="form-group">
+                    <label>备注:</label>
+                    <input id="order_remark" type="text" class="form-control" name="remark">
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button id="btnFlowerOrderAddOk"  type="button" class="btn btn-primary">确定</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)http://getbootstrap.com/docs/4.0/examples/dashboard/ -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!--引入headbar-->
+<div th:replace="main-commons/head::headbar"></div>
+<!--结束引用headbar-->
+<body>
+
+<!--引入抽取的topbar-->
+<!--模板名：会使用thymeleaf的前后缀配置规则进行解析-->
+<div th:replace="main-commons/bar::topbar"></div>
+
+<div class="container-fluid">
+    <div class="row">
+        <!--引入侧边栏-->
+        <div th:replace="main-commons/bar::#sidebar(activeUri='emps')"></div>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+            <div class="btn-group  btn-group-justified">
+                <button class="btn btn-md btn-info" disabled>所有订单信息</button>
+                <button class="btn btn-md btn-danger deleteBtn " onclick="deleteMulti();">删除多个</button>
+                <button class="btn btn-md btn-info" onclick="showFlowerOrderAdd()">出售花蕊</button>
+
+                <form class="form-inline form-control" role="form" th:action="@{/admin/flowerOrder/find}">
+                    <div class="form-group">
+                        <label class="sr-only" for="flowerOrder_flower_name_key">搜索</label>
+                        <input type="text" class="form-control" id="flowerOrder_flower_name_key"
+                               placeholder="搜索花蕊订单" name="flowerOrder_flower_name_key">
+                    </div>
+                    <button type="submit" class="btn btn-default">搜索</button>
+                </form>
+
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped table-sm" id="dataTable1">
+                    <thead>
+                    <tr>
+                        <th><input type="checkbox" class="minimal icheck_master"/></th>
+                        <th>ID</th>
+                        <th>花蕊ID</th>
+                        <th>用户ID</th>
+                        <th>单价</th>
+                        <th>数量</th>
+                        <th>订单时间</th>
+                        <th>备注</th>
+                        <th>订单状态</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="flowerOrder:${allFlowerOrder}">
+                        <td><input th:id="${flowerOrder.getId()}" type="checkbox" class="minimal"/></td>
+                        <td th:text="${flowerOrder.getId()}"></td>
+                        <td th:text="${flowerOrder.getFlower_id()}"></td>
+                        <td th:text="${flowerOrder.getUser_id()}"></td>
+                        <td th:text="${flowerOrder.getPrice()}"></td>
+                        <td th:text="${flowerOrder.getNum()}"></td>
+                        <td th:text="${#dates.format(flowerOrder.getOrder_time(),'yyyy-MM-dd HH:mm:ss')}"></td>
+                        <td th:text="${flowerOrder.getRemark()}"></td>
+                       <!-- state 0 表示待付款 ，1表示代发货 ，2表示 已发货 ，3 表示 已收货-->
+                        <td class="flowerOrderState"
+                            th:text="${flowerOrder.getState() == 0 ? '待付款':(flowerOrder.getState() == 1 ? '代发货':(flowerOrder.getState() == 2?'已发货':'已收货'))}"></td>
+                        <td>
+                            <button th:id="${flowerOrder.getId()}" type="button"
+                                    class="btn  btn-sm btn-primary flower-edit">
+                                编辑
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</div>
+<!--引用 commons-default 模块-->
+<div th:replace="main-commons/commons-modal/modal-default::modal-defaultbar"></div>
+<!--结束引用 commons-default 模块-->
+<!--引用 flowerOrder-add 模块-->
+<div th:replace="main-commons/commons-modal/flowerOrder/flowerOrder-add::flowerOrder-addbar"></div>
+<!--结束 引用 flowerOrder-add 模块-->
+<!--引入foot-scriptbar-->
+<div th:replace="main-commons/foot-script::foot-scriptbar"></div>
+<!--结束引用foot-scriptbar-->
+
+<script>
+    var idArray = new Array();
+    $(function () {
+        $("#btnModalOk").bind("click", function () {
+            $("#modal-default").modal("hide");
+        });
+    });
+
+    /**
+     * 批量删除
+     */
+    function deleteMulti() {
+        //定义一个存放id的地址
+
+        var _checkbox = $('input[type="checkbox"].minimal');
+
+        //将选中的元素 放入数组中
+        _checkbox.each(function () {
+            var _id = $(this).attr("id");
+            if (_id != null && _id != "undefine" && $(this).is(":checked")) {
+                idArray.push(_id);
+            }
+        });
+        console.log("我在这");
+        console.log(idArray.length)
+        if (idArray.length === 0) {
+            $("#modal-default").modal("show");
+        } else {
+            console.log("可以传数据")
+            del(idArray, "/admin/flowerOrder/delete");
+        }
+    }
+
+    function del(idArry, url) {
+        console.log("进入到del方法并传完数据");
+        $.ajax({
+            url: url,
+            type: "POST",
+            data: {"ids": idArry.toString()},
+            dataType: "JSON",
+            cache: false,
+            async: true,
+            success: function (data) {
+                if ("200" == data.status) {
+                    window.location.reload();
+                    alert(data.msg);
+                }
+            },
+            error: function () {
+                alert("失败")
+            }
+        });
+
+        idArray = new Array();
+    }
+</script>
+
+<script>
+
+    function showFlowerOrderAdd() {
+        $("#flowerOrder-add").modal("show");
+        getAllFlower('/admin/flower/getAllFlower');
+    }
+
+    function getAllFlower(url) {
+        $.ajax({
+            url: url,
+            type: "POST",
+            dataType: "JSON",
+            cache: false,
+            async: false,
+            success: function (data) {
+                allFlower = data.allFlower;
+                $("#order_flowerNameSelect").empty();
+                $.each(allFlower, function (index, value) {
+                    $("#order_flowerNameSelect").append("<option value='" + value.id + "'>" + value.name + "</option>");
+                });
+            },
+            error: function () {
+                alert("网络连接失败，请重试！")
+            }
+        });
+
+    }
+
+    $(function () {
+        $("#btnFlowerOrderAddOk").bind("click", function () {
+
+            var flower_id = $("#order_flowerNameSelect").val();
+            var username = $("#order_username").val();
+            var num = $("#order_num").val();
+            var remark = $("#order_remark").val();
+            $("#flowerOrder-add").modal("hide");
+            addFlowerOrder('/admin/flowerOrder/add', flower_id, username, num, remark)
+
+        });
+    });
+
+    function addFlowerOrder(url, flower_id, username, num, remark) {
+        $.ajax({
+            url: url,
+            type: "POST",
+            dataType: "JSON",
+            data: {
+                "flower_id": flower_id, "username": username,
+                "num": num, "remark": remark
+            },
+            cache: false,
+            async: false,
+            success: function (data) {
+                if ("200" == data.status) {
+                    alert(data.msg);
+                    window.location.reload();
+                }
+            },
+            error: function () {
+                alert("网络连接失败，请重试！")
+            }
+        });
+
+    }
+</script>
+
+</body>
+</html>
+

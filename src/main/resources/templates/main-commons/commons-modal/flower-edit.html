@@ -1,0 +1,52 @@
+<div class="modal fade" id="flower-edit" th:fragment="flower-editbar" xmlns:th="http://www.w3.org/1999/xhtml">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="padding: 8px 10px 10px 10px; margin-left: -10px;margin-right: 320px;margin-top: 2px;">
+                    <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">添加花蕊</h4>
+            </div>
+            <div class="modal-body">
+
+                <div class="form-group">
+                    <label>花蕊名称:</label>
+                    <input id="edit_name" type="text" class="form-control" name="new_name">
+                </div>
+
+                <div class="form-group">
+                    <label>售价:</label>
+                    <input id="edit_price" type="text" class="form-control" >
+                </div>
+
+                <div class="form-group">
+                    <label>库存:</label>
+                    <input id="edit_stock" type="text" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label>备注:</label>
+                    <input id="edit_remark" type="text" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label>图片地址:</label>
+                    <input id="edit_img" type="text" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label>种类ID</label>
+                    <select id="editKindNameSelect" class="form-control">
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button id="btnFlowerEditOk"  type="button" class="btn btn-primary">确定</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>

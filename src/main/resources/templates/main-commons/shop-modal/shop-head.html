@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)http://getbootstrap.com/docs/4.0/examples/dashboard/ -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="shop-headbar">
+    <meta charset="UTF-8">
+    <title>蜜语</title>
+    <link rel="stylesheet" href="css/shop.css" th:href="@{/asserts/css/shop.css}">
+    <link rel="stylesheet" href="css/shop.css" th:href="@{/asserts/css/shop-xiangqing.css}">
+    <link rel="stylesheet" href="css/car.css"  th:href="@{/asserts/css/car.css}">
+    <link rel="stylesheet" href="iconfont/iconfont.css" th:href="@{/asserts/iconfont/iconfont.css}">
+    <link rel="stylesheet" href="css/response.css" th:href="@{/asserts/css/response.css}">
+    <script src="js/jquery-3.2.1.js" th:src="@{/asserts/js/jquery-3.2.1.js}"></script>
+    <script src="js/index-jQuery.js" th:src="@{/asserts/js/index-jQuery.js}"></script>
+</head>
+<body>
+<!--头部开始-->
+<header>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+                <div class="logo">
+                    <font><img src="/asserts/img/logo2.png" alt="蜜语花店" th:src="@{/asserts/img/logo2.png}"></font>
+                </div>
+            </div>
+            <div class="col-lg-9 col-md-9">
+                <div class="head-right">
+                    <nav class="nav1">
+                        <ul class="main-nav">
+                            <li><a href="index.html" th:href="@{/}">首页</a></li>
+                            <li><a th:href="@{/shop}">鲜花商城</a></li>
+                            <li><a th:href="@{/user/login}">登录账号</a></li>
+                            <li><a th:href="@{/shop/flower/flowerCart}">我的 ：<span id="username">[[${session.username}]]</span></a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- 头部导航结束 -->

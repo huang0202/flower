@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>蜜语</title>
+    <link rel="stylesheet" href="css/index.css" th:href="@{/asserts/css/index.css}">
+    <link rel="stylesheet" href="css/response.css" th:href="@{/asserts/css/response.css}">
+    <link rel="stylesheet" href="iconfont/iconfont.css" th:href="@{asserts/iconfont/iconfont.css}">
+    <script src="js/jquery-3.2.1.js" th:src="@{/asserts/js/jquery-3.2.1.js}"></script>
+    <script src="js/index-jQuery.js" th:src="@{/asserts/js/index-jQuery.js}"></script>
+</head>
+<body>
+<!--头部开始-->
+<header>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+                <div class="logo">
+                  <font><img src="img/logo2.png" alt="蜜语花店" th:src="@{/asserts/img/logo2.png}"></font>
+                </div>
+            </div>
+            <div class="col-lg-9 col-md-9">
+                <div class="head-right">
+                    <nav class="nav1">
+                        <ul class="main-nav">
+                            <li><a href="index.html" th:href="@{/}">首页</a></li>
+                            <li><a th:href="@{/shop}">鲜花商城</a></li>
+                            <li><a th:href="@{/user/login}">登录账号</a></li>
+                            <li><a th:href="@{/shop/flower/flowerCart}">我的 ：<span id="username">[[${session.username}]]</span></a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- 头部导航结束 -->
+
+<!-- banner大图开始 -->
+<div class="section-banner">
+    <!-- <div class="container">
+        <div class="row"> -->
+    <div id="big-img">
+        <ul>
+            <li class="">
+                <img src="img/section1.jpg" alt="" th:src="@{/asserts/img/section1.jpg}">
+            </li>
+            <li class="">
+                <img src="img/section2.jpg" alt="" th:src="@{/asserts/img/section2.jpg}">
+            </li>
+            <li class="">
+                <img src="img/section3.jpg" alt="" th:src="@{/asserts/img/section3.jpg}">
+            </li>
+        </ul>
+    </div>
+</div>
+
+<!-- 欢迎 -->
+<section class="section-welcome">
+    <div class="container">
+        <ul class="row">
+            <li class="about-img col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <img th:src="@{/asserts/img/welcome.jpg}" alt="">
+            </li>
+            <li class="about-text col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <div class="title1 mb-1">Welcome To</div>
+                <h2 class="title2 mtn-2">Honey languager Store</h2>
+                <p>欢迎 <span>[[${session.username}]]</span>来到蜜语花店，本店开业于2019年，只为提供最好和最广泛的鲜花，希望能为大家带来幸福，是花店，也不仅仅是花店。</p>
+                <p>The Honey language shop opened in 2019, and it only exists to provide the best and the most extensive
+                    flowers. We hope to bring happiness to all of you. It's a flower shop, not just a flower shop.</p>
+                <a th:href="@{/shop}" class="title4">Our products&nbsp&nbsp
+                    <i class="iconfont">&#xe610</i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</section>
+
+<!-- 引入footerbar 模块-->
+<div th:replace="main-commons/shop-modal/shop-footer::shop-footerbar"></div>
+<div class="footer-bottom">© 蜜语花店.</div>
+
+</body>
+
+
+<script>
+    $(function () {
+        var session = $("#username").text();
+        if (session==''){
+            $("#username").text("游客");
+        }
+    });
+
+    //商城--> 花、自动轮播
+    var startRollOne = setInterval(rollOne, 2000);
+    $(".big-img >ul").hover(function () {
+        clearInterval(startRollOne);
+    }, function () {
+        startRollOne = setInterval(rollOne, 2000);
+    });
+
+    //banner图轮播
+    function rollOne() {
+        let imgw1 = $('#big-img').find('img').width();
+        $("#big-img >ul").animate({marginLeft: `-${imgw1}px`}, 2000, "linear", function () {
+            $(this).css({marginLeft: "0px"});
+            $(this).children("li").first().remove().clone(true).appendTo("#big-img >ul");
+        });
+    }
+</script>
+
+</html>

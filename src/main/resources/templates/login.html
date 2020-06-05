@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>蜜语</title>
+    <link href="${pageContext.request.contextPath}/bootstrap/css/bootstrap.css" th:href="@{/asserts/bootstrap/css/bootstrap.css}" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/bootstrap/css/bootstrap-responsive.css" th:href="@{/asserts/bootstrap/css/bootstrap-responsive.css}" rel="stylesheet">
+    <script src="${pageContext.request.contextPath}/bootstrap/js/jQuery.js" th:src="@{/asserts/bootstrap/js/jQuery.js}"></script>
+    <script src="${pageContext.request.contextPath}/bootstrap/js/bootstrap.js" th:src="@{/asserts/bootstrap/js/bootstrap.js}"></script>
+    <script type="text/javascript">
+        function checkForm() {
+            var userName = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+            var userTypes = document.getElementsByName("usertype");
+            var userType = null;
+            for(var i=0;i<userTypes.length;i++) {
+                if(userTypes[i].checked) {
+                    userType=uerTypes[i].value;
+                    break;
+                }
+            }
+            if (userName == null || username == "") {
+                document.getElementById("error").innerHTML = "用户名不能为空";
+                return false;
+            }
+            if (password == null || password == "") {
+                document.getElementById("error").innerHTML = "密码不能为空";
+                return false;
+            }
+            if (userType == null || userType == "") {
+                document.getElementById("error").innerHTML = "请选择用户类型";
+                return false;
+            }
+            return true;
+        }
+    </script>
+
+    <style type="text/css">
+        body {
+
+            padding-top: 260px;
+            padding-bottom: 40px;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-image: url('/asserts/img/flower-banner-img.jpg');
+            background-color: #8699a4;
+            background-repeat:no-repeat;
+            background-position:center;
+        }
+
+        .radio {
+            padding-top: 10px;
+            padding-bottom:10px;
+        }
+
+        .form-signin-heading{
+            text-align: center;
+        }
+
+        .form-signin {
+            max-width: 300px;
+            padding: 19px 29px 0px;
+            margin: 0 auto 20px;
+            background-color:	#DDDDDD;
+            border: 1px solid #e5e5e5;
+            -webkit-border-radius: 5px;
+            -moz-border-radius: 5px;
+            border-radius: 5px;
+            -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+            -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+            box-shadow: 0 1px 2px rgba(0,0,0,.05);
+        }
+        .form-signin .form-signin-heading{
+            margin-bottom: 10px;
+        }
+        .form-signin .checkbox {
+            margin-right: 100px;
+            margin-bottom: 10px;
+        }
+        .form-signin input[type="text"],
+        .form-signin input[type="password"] {
+            font-size: 16px;
+            height: auto;
+            margin-bottom: 15px;
+            padding: 7px 9px;
+        }
+    </style>
+
+</head>
+<body>
+<div class="container">
+    <form id="login_from" name="myForm" class="form-signin" method="post" th:action="@{/user/login}" >
+        <h1 class="form-signin-heading "><small><font color="gray">蜜语花店</font></small></h1>
+        <input type="hidden" id="msg"  style="color: red" th:value="${msg}"></input>
+        <input id="userName" name="username" type="text" th:value="${username}" class="input-block-level" placeholder="请输入用户名...">
+        <input id="password" name="password"  type="password" th:value="${password}" class="input-block-level" placeholder="请输入密码..." >
+
+        <label class="radio inline">
+            <input id="student" type="radio" name="userType" value="user"  th:checked="${userType} == 'admin'? false : true"/> 普通用户
+        </label>
+        <label class="radio inline">
+            <input id="dormManager" type="radio" name="userType" value="admin"  th:checked="${userType} == 'admin'? true :false"/> 花店管理员
+        </label>
+        <label class="checkbox">
+            <input id="remember" name="isremember" type="checkbox" th:checked="${isRemember} == true ? 'checked' : ''">记住我 &nbsp;&nbsp;&nbsp;&nbsp;
+        </label>
+        <div class="btn-group-justified" style="padding-bottom: 20px;" >
+            <button  class="btn btn-lg" type="submit">登录</button>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <a class="btn btn-lg btn-info" type="button"  th:href="@{/register}">注册</a>
+        </div>
+        <a th:href="@{/user/login/byEmail}">通过邮箱验证登录(普通用户)</a>
+    </form>
+</div>
+<script>
+    $(function () {
+        var msg = $("#msg").val();
+        if (msg == ''){
+
+        } else{
+            alert(msg)
+        }
+    })
+</script>
+</body>
+</html>

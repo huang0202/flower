@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huang.flower.mapper.BouquetMapper">
+
+    <!--
+        /**
+        * 得到所有花蕊的信息
+        * @return
+        */
+        public List<Flower> getAllFlower();-->
+    <resultMap id="getAll" type="com.huang.flower.entity.Bouquet">
+        <id column="bouquet_id" property="bouquet_id"/>
+        <result column="price" property="bouquet_name"/>
+        <result column="price" property="price"/>
+        <result column="remark" property="remark"/>
+        <result column="img" property="img"/>
+        <result column="kind_id" property="kind_id"/>
+        <result column="kind_name" property="kind_name"/>
+    </resultMap>
+
+    <!--/**
+    * 查询所有的花束信息
+    * @return
+    */
+    public List<Bouquet> getAllBouquet();-->
+    <select id="getAllBouquet" resultMap="getAll">
+        SELECT bouquet_id,bouquet_name,price,remark,img,kind_id,kind.`name` as kind_name
+        from bouquet
+        LEFT join kind
+        on kind_id  = kind.id
+    </select>
+
+    <!--    /**
+        * 批量删除花束信息
+        *
+        * @param array
+        */
+        public void deleteBouquet(String[] array);-->
+    <delete id="deleteBouquet">
+        delete from bouquet
+        where
+        bouquet_id in
+        <foreach collection="array" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

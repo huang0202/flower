@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huang.flower.mapper.StockPurchaseMapper">
+
+    <resultMap id="getAll" type="com.huang.flower.entity.StockPurchase">
+        <id column="id" property="id"/>
+        <result column="flower_id" property="flower_id"/>
+        <result column="supplier_id" property="supplier_id"/>
+        <result column="num" property="num"/>
+        <result column="price" property="price"/>
+        <result column="purchase_time" property="purchase_time"/>
+        <result column="remark" property="remark"/>
+        <result column="state" property="state"/>
+    </resultMap>
+
+    <!--    /**
+        * 查询所有的供应记录
+        *
+        * @return
+        */
+        public List<StockPurchase> getAllStockPurchase();-->
+
+    <select id="getAllStockPurchase" resultMap="getAll">
+        SELECT * from stock_purchase
+    </select>
+
+
+    <!--   /**
+       * 批量stockPurchase信息
+       *
+       * @param array
+       */
+       public void deleteStockPurchase(String[] array);-->
+
+    <delete id="deleteStockPurchase">
+        delete from stock_purchase
+        where
+        id in
+        <foreach collection="array" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </delete>
+
+
+    <!--    /**
+        * 添加供应记录
+        *
+        * @param flower_id
+        * @param supplier_id
+        * @param num
+        * @param price
+        * @param purchaseTime
+        * @param remark
+        * @param state
+        */
+        public void addStockPurchase(@Param("flower_id") int flower_id,
+        @Param("supplier_id") int supplier_id,
+        @Param("num") int num,
+        @Param("price") double price,
+        @Param("purchaseTime")Date purchaseTime,
+        @Param("remark") String remark,
+        @Param("state") int state);-->
+
+    <insert id="addStockPurchase">
+        insert into stock_purchase (
+        flower_id,
+        supplier_id,
+        num,
+        price,
+        purchase_time,
+        remark,
+        state
+        )
+        values (
+        #{flower_id},
+        #{supplier_id},
+        #{num},
+        #{price},
+        #{purchaseTime},
+        #{remark},
+        #{state}
+        )
+    </insert>
+
+    <!--    /**
+        * 通过id查找stockPurchase记录
+        *
+        * @param id
+        * @return
+        */
+        public StockPurchase getStockPurchaseById(int id);-->
+    <select id="getStockPurchaseById" resultMap="getAll">
+        select * from  stock_purchase
+        where id = #{id}
+    </select>
+
+    <!-- public void editStockPurchase(@Param("id") int id,
+     @Param("flower_id") int flower_id,
+     @Param("supplier_id") int supplier_id,
+     @Param("num") int num,
+     @Param("price") double price,
+     @Param("remark") String remark,
+     @Param("state") int state);-->
+
+    <update id="editStockPurchase">
+        update stock_purchase set
+        flower_id = #{flower_id},
+        supplier_id = #{supplier_id},
+        num = #{num},
+        price = #{price},
+        remark = #{remark},
+        state = #{state}
+        where id = #{id}
+    </update>
+
+    <!--    /**
+        * 通过 ids查询供应记录
+        * @param array
+        * @return
+        */
+        public List<StockPurchase> findStockPurchaseByFlowerIds(String array[]);-->
+
+    <select id="findStockPurchaseByFlowerIds" resultMap="getAll">
+        select  * from stock_purchase
+        where
+        flower_id in
+        <foreach collection="array" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </select>
+
+
+</mapper>

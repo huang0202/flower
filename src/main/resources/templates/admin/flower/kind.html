@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)http://getbootstrap.com/docs/4.0/examples/dashboard/ -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!--引入headbar-->
+<div th:replace="main-commons/head::headbar"></div>
+<!--结束引用headbar-->
+<body>
+
+<!--引入抽取的topbar-->
+<!--模板名：会使用thymeleaf的前后缀配置规则进行解析-->
+<div th:replace="main-commons/bar::topbar"></div>
+
+<div class="container-fluid">
+    <div class="row">
+        <!--引入侧边栏-->
+        <div th:replace="main-commons/bar::#sidebar(activeUri='emps')"></div>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+            <div class="btn-group  btn-group-justified">
+                <button class="btn btn-md btn-info" disabled>所有种类</button>
+                <button class="btn btn-md btn-danger deleteBtn " onclick="deleteMulti();">删除多个</button>
+                <button class="btn btn-md btn-info deleteBtn " onclick="showKindAdd()">新添种类</button>
+
+                <form class="form-inline form-control" role="form" th:action="@{/admin/kind/findByKey}">
+                    <div class="form-group">
+                        <label class="sr-only" for="kind_name_key">搜索</label>
+                        <input type="text" class="form-control" id="kind_name_key"
+                               placeholder="母亲节" name="kind_name_key">
+                    </div>
+                    <button type="submit" class="btn btn-default">搜索</button>
+                </form>
+
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped table-sm" id="dataTable1">
+                    <thead>
+                    <tr>
+                        <th><input type="checkbox" class="minimal icheck_master"/></th>
+                        <th>ID</th>
+                        <th>种类名称</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="kind:${allKind}">
+                        <td><input th:id="${kind.getId()}" type="checkbox" class="minimal"/></td>
+                        <td th:text="${kind.getId()}">ID</td>
+                        <td th:text="${kind.getName()}">花蕊种类</td>
+                        <td>
+                            <button th:id="${kind.getId()}" type="button" class="btn  btn-sm btn-primary kind-edit">编辑
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</div>
+<!--引用 commons-default 模块-->
+<div th:replace="main-commons/commons-modal/modal-default::modal-defaultbar"></div>
+<!--结束引用 commons-default 模块-->
+<!--引用 kind-add 模块 -->
+<div th:replace="main-commons/commons-modal/kind-add::kind-addbar"></div>
+<!--结束引用 kind-add 模块-->
+<!--引用 kind-edit 模块 -->
+<div th:replace="main-commons/commons-modal/kind-edit::kind-editbar"></div>
+<!--结束引用 kind-edit 模块-->
+<!--引入foot-scriptbar-->
+<div th:replace="main-commons/foot-script::foot-scriptbar"></div>
+<!--结束引用foot-scriptbar-->
+<script>
+    var idArray = new Array();
+    $(function () {
+        $("#btnModalOk").bind("click", function () {
+            console.log("没有选中")
+            $("#modal-default").modal("hide");
+        });
+    });
+
+    /**
+     * 批量删除
+     */
+    function deleteMulti() {
+        //定义一个存放id的地址
+
+        var _checkbox = $('input[type="checkbox"].minimal');
+
+        //将选中的元素 放入数组中
+        _checkbox.each(function () {
+            var _id = $(this).attr("id");
+            if (_id != null && _id != "undefine" && $(this).is(":checked")) {
+                idArray.push(_id);
+            }
+        });
+        console.log("我在这");
+        console.log(idArray.length)
+        if (idArray.length === 0) {
+            $("#modal-default").modal("show");
+        } else if(window.confirm("您确定要批量删除花蕊分类信息，删除之后将无法恢复！"))  {
+            console.log("可以传数据")
+            del(idArray, "/admin/kind/delete");
+        }
+    }
+
+    function del(idArry, url) {
+        console.log("进入到del方法并传完数据");
+        $.ajax({
+            "url": url,
+            type: "POST",
+            data: {"ids": idArry.toString()},
+            dataType: "JSON",
+            cache: false,
+            async: true,
+            success: function (data) {
+                if ("200" == data.status) {
+                    window.location.reload();
+                    alert(data.msg);
+                }
+            },
+            error: function () {
+                alert("失败")
+            }
+        });
+
+        idArray = new Array();
+    }
+</script>
+<script>
+    $(function () {
+        $("#btnKindAddOk").bind("click", function () {
+            var name = $("#kind-name").val();
+            $("#kind-add").modal("hide");
+            addKind('/admin/kind/add', name);
+        })
+
+    });
+
+    function showKindAdd() {
+        $("#kind-add").modal("show");
+    }
+
+    function addKind(url, name) {
+        $.ajax({
+            url: url,
+            type: "POST",
+            data: {"name": name},
+            dataType: "JSON",
+            cache: false,
+            async: true,
+            success: function (data) {
+                if ("200" == data.status) {
+                    alert(data.msg);
+                    window.location.reload();
+                }
+            },
+            error: function () {
+                alert("系统出错，请重试！")
+            }
+        });
+
+    }
+</script>
+<script>
+
+    var id;
+    var name;
+    $(function () {
+        $(".kind-edit").bind("click", function () {
+            $("#kind-edit").modal("show");
+            id = $(this).attr("id");
+
+        });
+        $("#btnKindEditOk").bind("click",function () {
+            name = $("#kind-edit-name").val();
+            console.log(id);
+            console.log(name);
+            $("#kind-edit").modal("hide");
+            editKind('/admin/kind/edit', id, name)
+        });
+
+    });
+
+
+    function editKind(url, id, name) {
+        $.ajax({
+            url: url,
+            type: "POST",
+            data: {"id": id, "name": name},
+            dataType: "JSON",
+            cache: false,
+            async: true,
+            success:function (data) {
+                alert(data.msg);
+                window.location.reload();
+            },
+            error: function () {
+                alert("网络连接失败，请重试！");
+            }
+        });
+    }
+</script>
+</body>
+</html>
+

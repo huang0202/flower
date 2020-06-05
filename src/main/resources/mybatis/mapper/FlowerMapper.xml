@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huang.flower.mapper.FlowerMapper">
+
+    <!--
+        /**
+        * 得到所有花蕊的信息
+        * @return
+        */
+        public List<Flower> getAllFlower();-->
+    <resultMap id="getAll" type="com.huang.flower.entity.Flower">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="price" property="price"/>
+        <result column="stock" property="stock"/>
+        <result column="remark" property="remark"/>
+        <result column="img" property="img"/>
+        <result column="kind_id" property="kind_id"/>
+    </resultMap>
+
+    <select id="getAllFlower" resultMap="getAll">
+        SELECT * from flower
+    </select>
+
+    <!--    /**
+        * 模糊查询花 通过花的名字
+        * @return
+        */
+        public List<Flower> findFlower(String name);-->
+
+    <select id="findFlower" resultMap="getAll">
+        select * from flower
+        where
+        name like CONCAT('%',#{name,jdbcType=VARCHAR},'%')  order by price
+    </select>
+
+    <!--    /**
+        * 批量删除花蕊信息
+        *
+        * @param array
+        */
+        public void deleteFlower(String[] array);-->
+
+    <delete id="deleteFlower">
+        delete from flower
+        where
+        id in
+        <foreach collection="array" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!--    /**
+     * 新增花蕊
+     *
+     * @param name
+     * @param price
+     * @param stock
+     * @param remark
+     * @param img
+     * @param kind_id
+     */-->
+    <insert id="addFlower">
+        INSERT INTO flower(
+        name ,
+        price,
+        stock,
+        remark,
+        img,
+        kind_id
+        ) VALUES (
+        #{name},
+        #{price},
+        #{stock},
+        #{remark},
+        #{img},
+        #{kind_id})
+    </insert>
+
+    <!--    /**
+        * 通过id查找花蕊信息
+        *
+        * @param id
+        * @return
+        */
+        public Flower getFlowerById(int id);-->
+
+    <select id="getFlowerById" resultMap="getAll">
+        select * from flower where id = #{id}
+    </select>
+
+    <!--
+        /**
+        * 编辑花蕊信息
+        *
+        * @param id
+        * @param name
+        * @param price
+        * @param stock
+        * @param remark
+        * @param img
+        * @param kind_id
+        */
+        public void editFlower(@Param("id") int id,
+        @Param("name") String name,
+        @Param("price") Double price,
+        @Param("stock") int stock,
+        @Param("remark") String remark,
+        @Param("img") String  img,
+        @Param("kind_id") int kind_id);-->
+
+    <update id="editFlower">
+        update flower set
+        name=#{name},
+        price= #{price},
+        stock= #{stock},
+        remark=#{remark},
+        img = #{img},
+        kind_id=#{kind_id}
+        where id=#{id}
+    </update>
+
+    <!--/**
+    * 添加花蕊的库存
+    *
+    * @param id
+    * @param num
+    */
+    public void addStock(@Param("id") int id, @Param("num") int num);-->
+
+    <update id="addStock">
+        update flower  set
+        stock = stock+#{num}
+        where id = #{id}
+    </update>
+
+    <!-- /**
+    * 通过花蕊种类id查找花蕊
+    *
+    * @param kind_id
+    * @return
+    */
+    public List<Flower> getFlowerByKindId(int kind_id);-->
+    <select id="getFlowerByKindId" resultMap="getAll">
+        select * from flower
+        where kind_id = #{kind_id}
+    </select>
+
+    <!--    /**
+        * 查询花蕊数量少于Minimum的所有花蕊
+        *
+        * @param minimum
+        * @return
+        */
+        public List<Flower> getFlowerOfStockLessNum(int minimum);-->
+    <select id="getFlowerOfStockLessNum" resultType="String">
+        select name from flower
+        where  stock &lt;= #{minimum}
+    </select>
+
+    <!--    /**
+        * 通过花蕊名称模糊查询出ids
+        *
+        * @param flowerOrder_flower_name_key
+        * @return
+        */
+        public String [] getIdsByFlowerKey(String flowerOrder_flower_name_key);-->
+
+    <select id="getIdsByFlowerKey" resultType="String">
+        select id from flower
+        where
+        name like CONCAT('%',#{flower_name_key,jdbcType=VARCHAR},'%')  order by id
+    </select>
+
+
+</mapper>

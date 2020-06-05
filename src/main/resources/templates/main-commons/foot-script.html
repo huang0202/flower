@@ -1,0 +1,37 @@
+<div th:fragment="foot-scriptbar">
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script type="text/javascript" src="asserts/js/jquery-3.2.1.slim.min.js"
+            th:src="@{/webjars/jquery/3.3.1/jquery.js}"></script>
+   <!-- <script type="text/javascript" src="asserts/js/popper.min.js"
+            th:src="@{/webjars/popper.js/1.11.1/dist/popper.js}"></script>-->
+    <script type="text/javascript" src="asserts/js/bootstrap.min.js"
+            th:src="@{/webjars/bootstrap/4.0.0/js/bootstrap.js}"></script>
+    <!-- Icons -->
+    <script type="text/javascript" src="asserts/js/feather.min.js" th:src="@{/asserts/js/feather.min.js}"></script>
+    <!-- iCheck 1.0.1 -->
+    <script src="/static/assets/plugins/iCheck/icheck.min.js"
+            th:src="@{/asserts/plugins/iCheck/icheck.min.js}"></script>
+
+    <script th:src="@{/asserts/app/app.js}"></script>
+    <script>
+        feather.replace()
+    </script>
+    <script>
+        $(function () {
+            //选择出控制的checkbox
+            var _masterCheckbox = $('input[type="checkbox"].icheck_master');
+            //选出所有的chexkbox
+            var _checkbox = $('input[type="checkbox"].minimal');
+
+            _masterCheckbox.on("ifClicked", function (e) {
+                console.log(e.target.checked);
+                //返回true表示未选中，false表示选中
+                if (e.target.checked) {
+                    _checkbox.iCheck('uncheck');
+                } else {
+                    _checkbox.iCheck('check');
+                }
+            })
+        });
+    </script>
+</div>

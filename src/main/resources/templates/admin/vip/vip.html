@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)http://getbootstrap.com/docs/4.0/examples/dashboard/ -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!--引入headbar-->
+<div th:replace="main-commons/head::headbar"></div>
+<!--结束引用headbar-->
+<body>
+
+<!--引入抽取的topbar-->
+<!--模板名：会使用thymeleaf的前后缀配置规则进行解析-->
+<div th:replace="main-commons/bar::topbar"></div>
+
+<div class="container-fluid">
+    <div class="row">
+        <!--引入侧边栏-->
+        <div th:replace="main-commons/bar::#sidebar(activeUri='emps')"></div>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+            <div class="btn-group  btn-group-justified">
+                <button class="btn btn-md btn-info" disabled>会员</button>
+                <button class="btn btn-md btn-danger deleteBtn " onclick="deleteMulti('/admin/vip/delete');">删除多个</button>
+                <button class="btn btn-md btn-info deleteBtn " onclick="showVipAdd()">新增会员</button>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped table-sm" id="dataTable1">
+                    <thead>
+                    <tr>
+                        <th><input type="checkbox" class="minimal icheck_master"/></th>
+                        <th>ID</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="vip:${allVip}">
+                        <td><input th:id="${vip.getId()}" type="checkbox" class="minimal"/></td>
+                        <td th:text="${vip.getId()}">ID</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</div>
+<!--引用 commons-default 模块-->
+<div th:replace="main-commons/commons-modal/modal-default::modal-defaultbar"></div>
+<!--结束引用 commons-default 模块-->
+<!-- 引用 vip-add 模块-->
+<div th:replace="main-commons/commons-modal/vip-add::vip-addbar"></div>
+<!-- 结束 引用 vip-add 模块-->
+<!--引入foot-scriptbar-->
+<div th:replace="main-commons/foot-script::foot-scriptbar"></div>
+<!--结束引用foot-scriptbar-->
+<script>
+    var idArray = new Array();
+    $(function () {
+        $("#btnModalOk").bind("click", function () {
+            console.log("没有选中")
+            $("#modal-default").modal("hide");
+        });
+    });
+    /**
+     * 批量删除
+     */
+    function deleteMulti(url) {
+        //定义一个存放id的地址
+
+        var _checkbox = $('input[type="checkbox"].minimal');
+
+        //将选中的元素 放入数组中
+        _checkbox.each(function () {
+            var _id = $(this).attr("id");
+            if (_id != null && _id != "undefine" && $(this).is(":checked")) {
+                idArray.push(_id);
+            }
+        });
+        console.log("我在这");
+        console.log(idArray.length)
+        if (idArray.length === 0) {
+            $("#modal-default").modal("show");
+        } else{
+            console.log("可以传数据")
+            del(idArray,url);
+        }
+    }
+    function del(idArry,url) {
+        console.log("进入到del方法并传完数据");
+        $.ajax({
+            "url":url,
+            type:"POST",
+            data:{"ids":idArry.toString()},
+            dataType:"JSON",
+            cache: false,
+            async: true,
+            success:function (data) {
+                if ("200" == data.status){
+                    window.location.reload();
+                    alert(data.msg);
+                }
+            },
+            error:function () {
+                alert("失败")
+            }
+        });
+
+        idArray = new Array();
+    }
+</script>
+
+<script>
+    $(function () {
+        $("#btnVipAddOk").bind("click",function () {
+            var id = $("#vip-id").val();
+            $("#kind-add").modal("hide");
+            addKind('/admin/vip/add',id);
+        })
+
+    });
+
+    function showVipAdd() {
+        $("#vip-add").modal("show");
+    }
+
+    function addKind(url,id) {
+        $.ajax({
+            url: url,
+            type: "POST",
+            data: {"id": id},
+            dataType: "JSON",
+            cache: false,
+            async: true,
+            success: function (data) {
+                if ("200" == data.status) {
+                    alert(data.msg);
+                    window.location.reload();
+                }
+            },
+            error: function () {
+                alert("系统出错，请重试！")
+            }
+        });
+
+    }
+</script>
+</body>
+</html>
+

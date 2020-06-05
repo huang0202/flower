@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huang.flower.mapper.AdminMapper">
+
+    <!--    /**
+        *  通过用户名查找出admin
+        * @param username
+        * @return
+        */
+        public Admin  getAdminByUsername(String  username);-->
+
+    <select id="getAdminByUsername" resultType="com.huang.flower.entity.Admin">
+        SELECT * from admin where username=#{username}
+    </select>
+
+    <!--
+        /**
+        * 通过用户名修改密码
+        *
+        * @param username
+        * @param password
+        */
+        public void changePwdByUsername(@Param("username") String username,
+        @Param("password") String password);-->
+
+    <update id="changePwdByUsername">
+        update admin set
+        password = #{password}
+        where username = #{username}
+    </update>
+
+    <!--
+        /**
+        * 注册用户
+        * @param username
+        * @param password
+        * @param email
+        * @param phone
+        * @param usertype
+        */
+        public void registerAdmin(@Param("username") String username,
+        @Param("password") String password,
+        @Param("email") String email,
+        @Param("phone") String phone,
+        @Param("usertype") String usertype);
+    -->
+    <insert id="registerAdmin">
+        insert into admin(
+        username,
+        password,
+        email,
+        phone
+        ) values(
+        #{username},
+        #{password},
+        #{email},
+        #{phone}
+        )
+    </insert>
+
+    <!--
+        /**
+        * 查询所有管理员的邮箱
+        *
+        * @return
+        */
+        public String[] getAdminEmails();
+    -->
+    <select id="getAdminEmails" resultType="String">
+        select email from admin
+        where email is not null
+    </select>
+
+</mapper>

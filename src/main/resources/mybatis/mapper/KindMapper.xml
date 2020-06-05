@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huang.flower.mapper.KindMapper">
+
+    <!--    /**
+        *  查出所有的花的种类
+        * @return
+        */
+        public List<Kind> getAllKind();-->
+    <resultMap id="getAll" type="com.huang.flower.entity.Kind">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+    </resultMap>
+
+    <select id="getAllKind" resultMap="getAll">
+        SELECT * from kind
+    </select>
+
+    <!--    /**
+        * 批量删除花蕊分类信息
+        *
+        * @param array
+        */
+        public void deleteKind(String[] array);-->
+    <delete id="deleteKind">
+        delete from kind
+        where
+        id in
+        <foreach collection="array" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!--
+        /**
+        * 新增花蕊分类
+        *
+        * @param name
+        */
+        public void addKind(String name);-->
+    <insert id="addKind">
+        insert  into kind(name) values (#{name})
+    </insert>
+
+
+    <!--
+        /**
+        * 编辑分类信息
+        *
+        * @param id
+        * @param name
+        */
+        public void editKind(int id, String name);
+    -->
+    <update id="editKind">
+        update kind set
+        name = #{name}
+        where id=#{id}
+    </update>
+
+    <!--    /**
+        * 通过种类的名称模糊查询
+        *
+        * @param kind_name_key
+        * @return
+        */
+        public List<Kind>  findKindByKey(String kind_name_key);-->
+
+    <select id="findKindByKey" resultMap="getAll">
+        select * from kind
+        where
+        name like CONCAT('%',#{kind_name_key,jdbcType=VARCHAR},'%')  order by id
+    </select>
+
+</mapper>

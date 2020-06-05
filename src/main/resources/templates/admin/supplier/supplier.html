@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)http://getbootstrap.com/docs/4.0/examples/dashboard/ -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!--引入headbar-->
+<div th:replace="main-commons/head::headbar"></div>
+<!--结束引用headbar-->
+<body>
+
+<!--引入抽取的topbar-->
+<!--模板名：会使用thymeleaf的前后缀配置规则进行解析-->
+<div th:replace="main-commons/bar::topbar"></div>
+
+<div class="container-fluid">
+    <div class="row">
+        <!--引入侧边栏-->
+        <div th:replace="main-commons/bar::#sidebar(activeUri='emps')"></div>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+            <div class="btn-group  btn-group-justified">
+                <button class="btn btn-md btn-info" disabled>供货商</button>
+                <button class="btn btn-md btn-danger deleteBtn " onclick="deleteMulti('/admin/supplier/delete');">删除多个
+                </button>
+                <button class="btn btn-md btn-info deleteBtn " onclick="showSupplierAdd('/admin/flower/getAllFlower')">
+                    新增供应商
+                </button>
+                <form class="form-inline form-control" role="form" th:action="@{/admin/supplier/findByKey}">
+                    <div class="form-group">
+                        <label class="sr-only" for="supplier_name_key">搜索</label>
+                        <input type="text" class="form-control" id="supplier_name_key"
+                               placeholder="搜索花蕊供应商" name="supplier_name_key">
+                    </div>
+                    <button type="submit" class="btn btn-default">搜索</button>
+                </form>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped table-sm" id="dataTable1">
+                    <thead>
+                    <tr>
+                        <th><input type="checkbox" class="minimal icheck_master"/></th>
+                        <th>ID</th>
+                        <th>公司名称</th>
+                        <th>联系电话</th>
+                        <th>公司邮箱</th>
+                        <th>所在省</th>
+                        <th>所在市</th>
+                        <th>街道</th>
+                        <th>详细位置</th>
+                        <th>供应花蕊ID</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="supplier:${allSupplier}">
+                        <td><input th:id="${supplier.getId()}" type="checkbox" class="minimal"/></td>
+                        <td th:text="${supplier.getId()}">ID</td>
+                        <td th:text="${supplier.getName()}">公司名称</td>
+                        <td th:text="${supplier.getPhone()}">ID</td>
+                        <td th:text="${supplier.getEmail()}">ID</td>
+                        <td th:text="${supplier.getProvince()}">ID</td>
+                        <td th:text="${supplier.getCity()}">ID</td>
+                        <td th:text="${supplier.getStreet()}">ID</td>
+                        <td th:text="${supplier.getDetailed()}">ID</td>
+                        <td th:text="${supplier.getFlower_id()}">ID</td>
+                        <td>
+                            <button th:id="${supplier.getId()}" type="button" class="btn  btn-sm btn-primary supplier-edit">编辑</button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</div>
+<!--引用 commons-default 模块-->
+<div th:replace="main-commons/commons-modal/modal-default::modal-defaultbar"></div>
+<!--结束引用 commons-default 模块-->
+<!--引用 supplier-add 模块-->
+<div th:replace="main-commons/commons-modal/supplier-add::supplier-addbar"></div>
+<!--结束引用 supplier-ad的 模块-->
+<!--引用 supplier-edit 模块-->
+<div th:replace="main-commons/commons-modal/supplier-edit::supplier-editbar"></div>
+<!--结束引用 supplier-edit的 模块-->
+<!--引入foot-scriptbar-->
+<div th:replace="main-commons/foot-script::foot-scriptbar"></div>
+<!--结束引用foot-scriptbar-->
+<script>
+    var idArray = new Array();
+    $(function () {
+        $("#btnModalOk").bind("click", function () {
+            console.log("没有选中")
+            $("#modal-default").modal("hide");
+        });
+    });
+
+    /**
+     * 批量删除
+     */
+    function deleteMulti(url) {
+        //定义一个存放id的地址
+
+        var _checkbox = $('input[type="checkbox"].minimal');
+
+        //将选中的元素 放入数组中
+        _checkbox.each(function () {
+            var _id = $(this).attr("id");
+            if (_id != null && _id != "undefine" && $(this).is(":checked")) {
+                idArray.push(_id);
+            }
+        });
+        console.log("我在这");
+        console.log(idArray.length)
+        if (idArray.length === 0) {
+            $("#modal-default").modal("show");
+        } else {
+            console.log("可以传数据")
+            del(idArray, url);
+        }
+    }
+
+    function del(idArry, url) {
+        console.log("进入到del方法并传完数据");
+        $.ajax({
+            "url": url,
+            type: "POST",
+            data: {"ids": idArry.toString()},
+            dataType: "JSON",
+            cache: false,
+            async: true,
+            success: function (data) {
+                if ("200" == data.status) {
+                    window.location.reload();
+                    alert(data.msg);
+                }
+            },
+            error: function () {
+                alert("失败")
+            }
+        });
+
+        idArray = new Array();
+    }
+</script>
+<script>
+
+    $(function () {
+        $("#btnSupplierAddOk").bind("click", function () {
+            $("#supplier-add").modal("hide");
+            var name = $("#name").val()
+            var phone = $("#phone").val();
+            var email = $("#email").val();
+            var province = $("#province").val();
+            var city = $("#city").val();
+            var street = $("#street").val();
+            var detailed = $("#detailed").val();
+            var flower_id = $("#flowerNameSelect option:selected").val();
+            addSupplier('/admin/supplier/add', name, phone, email, province, city, street, detailed, flower_id)
+        })
+
+
+    });
+
+    function showSupplierAdd(url) {
+        $.ajax({
+            url: url,
+            type: "POST",
+            dataType: "JSON",
+            cache: false,
+            async: false,
+            success: function (data) {
+                $("#supplier-add").modal("show");
+                allFlower = data.allFlower;
+                $("#flowerNameSelect").empty();
+                $.each(allFlower, function (index, value) {
+                    console.log(value.id + ":" + value.name);
+                    $("#flowerNameSelect").append("<option value='" + value.id + "'>" + value.name + "</option>");
+                })
+            },
+            error: function () {
+                alert("连接失败");
+            }
+        });
+    }
+
+        function addSupplier(url, name, phone, email, province, city, street, detailed, flower_id) {
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: {
+                    "name": name, "phone": phone,
+                    "email": email, "province": province,
+                    "city": city, "street": street,
+                    "detailed": detailed, "flower_id": flower_id
+                },
+                dataType: "JSON",
+                cache: false,
+                async: true,
+                success: function (data) {
+                    if ("200" == data.status) {
+                        alert(data.msg);
+                        window.location.reload();
+                    }
+                },
+                error: function () {
+                    alert("网络连接失败，请重试！")
+                }
+            });
+    }
+</script>
+<script>
+    var  id;
+    $(function () {
+        //给编辑绑定方法
+        $(".supplier-edit").bind("click",function () {
+            $("#supplier-edit").modal("show");
+            id = $(this).attr("id");
+            getAllFlower('/admin/flower/getAllFlower');
+            getSupplierById('/admin/supplier/getSupplierById',id);
+
+        });
+
+        //确认编辑
+        $("#btnSupplierEditOk").bind("click",function () {
+            $("#supplier-edit").modal("hide");
+
+            var name = $("#edit-name").val();
+            var phone = $("#edit-phone").val();
+            var  email = $("#edit-email").val();
+            var province = $("#edit-province").val();
+            var city = $("#edit-city").val();
+            var street = $("#edit-street").val();
+            var detailed = $("#edit-detailed").val();
+            var flower_id = $("#editFlowerNameSelect").val();
+            editSupplier('/admin/supplier/edit',id,name,phone,email,province,city,street,detailed,flower_id);
+        });
+
+
+    });
+
+    function getAllFlower(url) {
+        $.ajax({
+            url: url,
+            type: "POST",
+            dataType: "JSON",
+            cache: false,
+            async: false,
+            success: function (data) {
+                allFlower = data.allFlower;
+                $("#editFlowerNameSelect").empty();
+                $.each(allFlower, function (index, value) {
+                    console.log(value.id + ":" + value.name);
+                    $("#editFlowerNameSelect").append("<option value='" + value.id + "'>" + value.name + "</option>");
+                })
+            },
+            error: function () {
+                alert("连接失败");
+            }
+        });
+    }
+    function getSupplierById(url,id) {
+        $.ajax({
+            url: url,
+            type: "POST",
+            dataType: "JSON",
+            data:{"id":id},
+            cache: false,
+            async: false,
+            success:function (data) {
+                console.log(data.supplier);
+                //将要编辑的supplier信息回显到页面
+                $("#edit-name").val(data.supplier.name);
+                $("#edit-phone").val(data.supplier.phone);
+                $("#edit-email").val(data.supplier.email);
+                $("#edit-province").val(data.supplier.province);
+                $("#edit-city").val(data.supplier.city);
+                $("#edit-street").val(data.supplier.street);
+                $("#edit-detailed").val(data.supplier.detailed);
+                $("#editFlowerNameSelect").val(data.supplier.flower_id);
+            },
+            error:function () {
+                alert("连接失败");
+            }
+        });
+
+    }
+ 
+    function editSupplier(url,id,name,phone,email,province,city,street,detailed,flower_id) {
+        $.ajax({
+            url: url,
+            type: "POST",
+            dataType: "JSON",
+            data: {
+                "id": id, "name": name,
+                "phone": phone, "email": email,
+                "province": province, "city": city,
+                "street": street, "detailed": detailed,
+                "flower_id": flower_id
+            },
+            cache: false,
+            async: true,
+            success: function (data) {
+                alert(data.msg);
+                window.location.reload();
+            }, error: function () {
+                alert("网络连接错误，请重试！")
+            }
+        });
+    }
+</script>
+</body>
+</html>
+

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huang.flower.mapper.SupplierMapper">
+
+    <resultMap id="getAll" type="com.huang.flower.entity.Supplier">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="phone" property="phone"/>
+        <result column="email" property="email"/>
+        <result column="province" property="province"/>
+        <result column="city" property="city"/>
+        <result column="street" property="street"/>
+        <result column="detailed" property="detailed"/>
+        <result column="flower_id" property="flower_id"/>
+    </resultMap>
+
+    <!--    /**
+        * 查出所有的供货商
+        *
+        * @return
+        */
+        public List<Supplier> getAllSupplier();-->
+
+    <select id="getAllSupplier" resultMap="getAll">
+        SELECT * from supplier
+    </select>
+
+    <!--    /**
+        * 批量删除花蕊供应商信息
+        *
+        * @param array
+        */
+        public void deleteSupplier(String[] array);-->
+
+    <delete id="deleteSupplier">
+        delete from supplier
+        where
+        id in
+        <foreach collection="array" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </delete>
+
+
+    <!--    /**
+        *
+        * @param name
+        * @param phone
+        * @param email
+        * @param province
+        * @param city
+        * @param street
+        * @param detailed
+        * @param flower_id
+        */
+        public  void addSupplier(@Param("name") String name,
+        @Param("phone") String phone,
+        @Param("email") String email,
+        @Param("province") String province,
+        @Param("city") String city,
+        @Param("street") String street,
+        @Param("detailed") String detailed,
+        @Param("flower_id") int flower_id);-->
+
+    <insert id="addSupplier">
+        insert into supplier (
+        name,
+        phone,
+        email,
+        province,
+        city,
+        street,
+        detailed,
+        flower_id)
+        values(
+        #{name},
+        #{phone},
+        #{email},
+        #{province},
+        #{city},
+        #{street},
+        #{detailed},
+        #{flower_id}
+        )
+    </insert>
+
+    <!--  /**
+      * 查找supplier回显到supplier的编辑页面
+      *
+      * @param id
+      * @return
+      */
+      public Supplier getSupplierById(int id);-->
+
+    <select id="getSupplierById" resultMap="getAll">
+        select * from supplier where id=#{id}
+    </select>
+
+    <!--public void editSupplier(@Param("id") int id,
+        @Param("name") String name,
+        @Param("phone") String phone,
+        @Param("email") String email,
+        @Param("province") String province,
+        @Param("city") String city,
+        @Param("street") String street,
+        @Param("detailed") String detailed,
+        @Param("flower_id") int flower_id);-->
+
+    <update id="editSupplier">
+        update supplier set
+        name = #{name},
+        phone = #{phone},
+        email = #{email},
+        province = #{province},
+        city = #{city},
+        street = #{street},
+        detailed = #{detailed},
+        flower_id = #{flower_id}
+        where id = #{id}
+    </update>
+
+    <!--    /**
+        * 通过模糊查询 查找供应商
+        *
+        * @param suppler_name_key
+        * @return
+        */
+        public List<Supplier> findSupplier(String suppler_name_key);-->
+    <select id="findSupplier" resultMap="getAll">
+        select * from supplier
+        where
+        name like CONCAT('%',#{supplier_name_key,jdbcType=VARCHAR},'%')  order by id
+    </select>
+
+</mapper>

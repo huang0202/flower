@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huang.flower.mapper.UserMapper">
+
+
+    <!--    /**
+        *  通过用户名查找出User
+        * @param username
+        * @return
+        */
+        public User getUserByUsername(String  username);-->
+    <select id="getUserByUsername" resultType="com.huang.flower.entity.User">
+        SELECT * from user where username=#{username}
+    </select>
+
+    <!--
+    /**
+    * 注册用户
+    * @param username
+    * @param password
+    * @param email
+    * @param phone
+    * @param usertype
+    */
+    public void registerUser(@Param("username") String username,
+    @Param("password") String password,
+    @Param("email") String email,
+    @Param("phone") String phone,
+    @Param("usertype") String usertype);
+-->
+    <insert id="registerUser">
+        insert into user(
+        username,
+        password,
+        email,
+        phone
+        ) values(
+        #{username},
+        #{password},
+        #{email},
+        #{phone}
+        )
+    </insert>
+
+    <!--    /**
+        * 查询所有用户的邮箱
+        *
+        * @return
+        */
+        public String[] getUserEmails();-->
+
+    <select id="getUserEmails" resultType="String">
+        select email from user
+         where email is not null
+    </select>
+
+    <!--    /**
+        * 通过用户名查询用户id
+        *
+        * @param username
+        * @return
+        */
+        public long  getUserIdByUsername(String username);-->
+    <select id="getUserIdByUsername" resultType="long">
+        select  id from  user
+        where username = #{username}
+    </select>
+
+
+<!--    public String getUserByEmail(String email);-->
+
+    <select id="getUserByEmail" resultType="com.huang.flower.entity.User">
+        select  * from  user
+        where email = #{email}
+    </select>
+
+</mapper>

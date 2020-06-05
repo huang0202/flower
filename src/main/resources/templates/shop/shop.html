@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)http://getbootstrap.com/docs/4.0/examples/dashboard/ -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!-- 引入headbar 模块-->
+<div th:replace="main-commons/shop-modal/shop-head::shop-headbar"></div>
+
+
+<!-- 图开始 -->
+<section class="banner-img">
+    <div class="container">
+        <div class="row">
+            <div class="big-img col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
+                <h2 class="text-center">SHOP</h2>
+            </div>
+            <div class="big-img2 col-lg-12 col-md-12 col-sm-12 col-xs-12"></div>
+        </div>
+    </div>
+</section>
+<section class="section-mulu">
+    <div class="container">
+        <div class="row">
+            <ul class="mulu">
+                <li><a th:href="@{/}">首页</a></li>
+                <li><span>//</span><a th:href="@{/shop}">鲜花商城</a></li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- 商品列表开始 -->
+<div class="section-shop">
+    <div class="container">
+        <div class="row">
+            <div class="huayu-right col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                <div class="row">
+                    <div class="hy-right ">
+                        <form th:action="@{/shop/flower/find}" method="get">
+                            <div class="search">
+                                <input id="flower_search" type="text" placeholder="满天星" name="flower_name">
+                                <button id="flower_search_submit" type="submit">
+                                    <i class="iconfont">&#xe638</i>
+                                </button>
+                            </div>
+                        </form>
+
+                        <div class="tuijian">
+                            <h3>全部分类</h3>
+                            <div class="tj-list" th:each="kind:${allKind}">
+                                <div class="tjs"><a th:href="@{'/shop/flower/findByKind?id='+${kind.getId()}}"
+                                                    th:text="${kind.getName()}">分类</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                <div class="">
+                    <p class="name">全部花蕊</p>
+                    <ul class="xinpin" th:each="flower:${allFlower}">
+
+                        <li class="products col-lg-3 col-md-3 col-sm-3 col-xs-3">
+
+                            <a  th:href='@{/shop/details(id=${flower.getId()})}'>
+                                <!-- 将图片放在本地<img th:src="@{/asserts/img/{filename}(filename=${flower.getImg()})}">-->
+                                <!--将花蕊图片放在本地-->
+                                <img th:src="@{/asserts/img/{filename}(filename=${flower.getImg()})}" style="max-width :150px;height: 150px;">
+                                <span class="name" id="search_flower_name" th:text="${flower.getName()}">满天星</span>
+
+                                <ins th:text="${flower.getPrice()}">￥55.5</ins>
+                                <br>
+                                &nbsp; &nbsp; <span>库存：</span>
+                                <ins th:text="${flower.getStock()}">￥55.5</ins>
+                            </a>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 引入footerbar 模块-->
+<div th:replace="main-commons/shop-modal/shop-footer::shop-footerbar"></div>
+
+<div class="footer-bottom">© 2019 蜜语花店.</div>
+
+</body>
+
+<script>
+    $(function () {
+        var session = $("#username").text();
+        if (session == '') {
+            $("#username").text("游客");
+        }
+    });
+</script>
+
+</html>

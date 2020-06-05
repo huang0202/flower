@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huang.flower.mapper.FlowerOrderMapper">
+
+    <resultMap id="getAll" type="com.huang.flower.entity.FlowerOrder">
+        <id column="id" property="id"/>
+        <result column="flower_id" property="flower_id"/>
+        <result column="user_id" property="user_id"/>
+        <result column="num" property="num"/>
+        <result column="price" property="price"/>
+        <result column="order_time" property="order_time"/>
+        <result column="remark" property="remark"/>
+        <result column="state" property="state"/>
+    </resultMap>
+
+    <!--    /**
+        * 查出所有的订单信息
+        *
+        * @return
+        */
+        public List<FlowerOrder> getAllFlowerOrder();-->
+
+    <select id="getAllFlowerOrder" resultMap="getAll">
+        select * from flower_order
+    </select>
+
+
+    <!--/**
+    * 批量删除花蕊订单信息
+    *
+    * @param array
+    */
+    public void deleteFlowerOrder(String[] array);-->
+
+    <delete id="deleteFlowerOrder">
+        delete from flower_order
+        where
+        id in
+        <foreach collection="array" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </delete>
+
+
+    <!--    /**
+        * 添加订单信息
+        *
+        * @param flower_id
+        * @param user_id
+        * @param price
+        * @param order_time
+        * @param num
+        * @param remark
+        */
+        public void addFlowerOrder(@Param("flower_id") int flower_id,
+        @Param("user_id") int user_id,
+        @Param("price") Double price,
+        @Param("order_time") Date order_time,
+        @Param("num") int num,
+        @Param("remark") String remark);-->
+
+    <insert id="addFlowerOrder">
+        insert into flower_order(
+        flower_id,
+        user_id,
+        num,
+        price,
+        order_time,
+        remark
+        )values (
+        #{flower_id},
+        #{user_id},
+        #{num},
+        #{price},
+        #{order_time},
+        #{remark}
+        )
+    </insert>
+
+    <!--    /**
+        * 通过 ids查询订单
+        * @param array
+        * @return
+        */
+        public List<FlowerOrder> findFlowerOrderByIds(String array[]);-->
+
+    <select id="findFlowerOrderByIds" resultMap="getAll">
+        select  * from flower_order
+        where
+        flower_id in
+        <foreach collection="array" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </select>
+
+    <!--public void  buyOneFlower(@Param("flower_id") int flower_id,
+    @Param("user_id") int user_id,
+    @Param("vip_id") int vip_id,
+    @Param("num") int num,
+    @Param("price") double price,
+    @Param("order_time") Date order_time,
+    @Param("remark") String remark);-->
+
+    <insert id="buyOneFlower">
+        insert into flower_order(
+        flower_id,
+        user_id,
+        num,
+        price,
+        order_time,
+        remark
+        )value (
+        #{flower_id},
+        #{user_id},
+        #{num},
+        #{price},
+        #{order_time},
+        #{remark}
+        )
+    </insert>
+
+
+    <select id="test" resultMap="getAll">
+        select * from flower_order
+    </select>
+</mapper>

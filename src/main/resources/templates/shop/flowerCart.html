@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)http://getbootstrap.com/docs/4.0/examples/dashboard/ -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!-- 引入headbar 模块-->
+<div th:replace="main-commons/shop-modal/shop-head::shop-headbar"></div>
+<!-- 图开始 -->
+<section class="banner-img">
+    <div class="container">
+        <div class="row">
+            <div class="big-img col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
+                <h2 class="text-center">CART</h2>
+            </div>
+            <div class="big-img2 col-lg-12 col-md-12 col-sm-12 col-xs-12"></div>
+        </div>
+    </div>
+</section>
+<section class="section-mulu">
+    <div class="container">
+        <div class="row">
+            <ul class="mulu">
+                <li><a th:href="@{/}">首页</a></li>
+                <li><span>//</span><a th:href="@{/shop}">鲜花商城</a></li>
+                <li><span>//</span><a th:href="@{/shop/flower/flowerCart}">我的购物车</p></a></li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- 购物车 -->
+<section class="car">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                <table class="table">
+                    <tbody>
+                    <tr th:each="flowerOfCart:${allFlowerOfCart}">
+
+                        <td class="delete">
+                            <a class="flowerOfCartDelete" th:id="${flowerOfCart.getId()}">×</a>
+                        </td>
+                        <td class="shop">
+                            <a th:href='@{/shop/details(id=${flowerOfCart.getFlower_id()})}'><img src="img/car1.jpg"
+                                                               th:src="@{/asserts/img/{filename}(filename=${flowerOfCart.getImg()})}"
+                                                               alt=""></a>
+                        </td>
+                        <td class="name">
+                            <a href="shop-xiangqing.html" th:text="${flowerOfCart.getName()}">玫瑰</a>
+                            <span class=price th:text="${flowerOfCart.getPrice()}">99</span>
+                        </td>
+                        <td class="number">
+                            <input class="flowerOfCartStock" th:id="${flowerOfCart.getId()}" type="text" min="1"
+                                   name="number"
+                                   th:value="${flowerOfCart.getSum() <   flowerOfCart.getStock()? flowerOfCart.getSum():flowerOfCart.getSum()}"
+                                   size="4"
+                                   th:max="${flowerOfCart.getStock()}">
+                        </td>
+                        <td class="zong">
+                            <span id="oneFlowerPriceSum">￥<span th:text="${flowerOfCart.getPrice() * flowerOfCart.getSum()}"></span></span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                <div class="totals">
+                    <table>
+                        <tbody>
+                        <tr class="car-subtotal">
+                            <th>小计</th>
+                            <td>￥<span  th:text="${priceSum}"></span></td>
+                        </tr>
+                        <tr class="car-subtotal">
+                            <th>配送方式(到店自取)</th>
+                            <td>快递 ￥0</td>
+                        </tr>
+                        <tr class="car-subtotal">
+                            <th>总计</th>
+                            <td>￥<span th:text="${priceSum}"></span></td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="jiesuan">
+                        <a href="">提交订单</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<input type="hidden" id="user_id" th:value="${user_id}">
+
+<!-- 引入footerbar 模块-->
+<div th:replace="main-commons/shop-modal/shop-footer::shop-footerbar"></div>
+
+<div class="footer-bottom">© 2019 蜜语花店.</div>
+
+<script>
+
+    $(function () {
+        //购物车中某个花蕊的数量
+        var user_id = $("#user_id").val();
+        $(".flowerOfCartStock").bind("blur", function () {
+            var flower_id = $(this).attr("id");
+            console.log(user_id);
+        });
+
+        $(".flowerOfCartDelete").bind("click", function () {
+
+            if(window.confirm( "您确定要从购物车中删除此花蕊")){
+                var flower_id = $(this).attr("id");
+                console.log(flower_id);
+                deleteFlowerOfCart('/shop/flower/joinFlowerCart/deleteFlower', user_id, flower_id);
+            }
+
+        });
+
+    });
+
+    function deleteFlowerOfCart(url, user_id, flower_id) {
+        $.ajax({
+            url: url,
+            type: "POST",
+            data: {"user_id": user_id, "flower_id": flower_id},
+            dataType: "JSON",
+            cache: false,
+            async: false,
+            success: function (data) {
+                alert(data.msg);
+                window.location.reload();
+            },
+            error: function () {
+                alert("网络连接失败，请重试！")
+            }
+        });
+    }
+</script>
+</body>
+</html>

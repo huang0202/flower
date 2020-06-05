@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huang.flower.mapper.FlowerCartMapper">
+
+
+    <resultMap id="getAll" type="com.huang.flower.entity.FlowerCartJoinFlower">
+        <id column="user_id" property="user_id"/>
+        <result column="id" property="id"/>
+        <result column="flower_id" property="flower_id"/>
+        <result column="num" property="num"/>
+        <result column="sum" property="sum"/>
+        <result column="join_time" property="join_time"/>
+        <result column="name" property="name"/>
+        <result column="price" property="price"/>
+        <result column="stock" property="stock"/>
+        <result column="remark" property="remark"/>
+        <result column="img" property="img"/>
+        <result column="kind_id" property="kind_id"/>
+    </resultMap>
+
+
+    <!--    /**
+        * 通过用户的 id查询他的购物车
+        *
+        * @param user_id
+        * @return
+        */
+        public List<FlowerCart>  getAllFlowerCartByUserId (int user_id);-->
+
+    <select id="getAllFlowerCartByUserId" resultMap="getAll">
+     select *
+     from(
+	 select * ,sum(num) as sum
+     from flower_cart
+     where user_id = #{user_id} GROUP BY flower_id
+     ) as cart LEFT JOIN flower ON  cart.flower_id = flower.id
+    </select>
+
+    <insert id="jionFlowerCart">
+        insert into flower_cart(
+        user_id,
+        flower_id,
+        num,
+        join_time
+        )value(
+        #{user_id},
+        #{flower_id},
+        #{num},
+        #{join_time}
+        )
+    </insert>
+
+    <!--    /**
+        * 删除用户购物车中某个花蕊
+        *
+        * @param user_id
+        * @param flower_id
+        */
+        public void flowerOfCartDelete(@Param("user_id") long user_id,
+        @Param("flower_id") long flower_id);-->
+    <delete id="flowerOfCartDelete">
+        delete from  flower_cart
+        where user_id = #{user_id} and flower_id = #{flower_id}
+    </delete>
+
+</mapper>

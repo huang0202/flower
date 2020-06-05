@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>蜜语花店邮箱验证登录</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</head>
+<style>
+    * {
+        padding: 0;
+        margin: 0;
+    }
+
+    form {
+        max-width: 280px;
+        margin: auto;
+        margin-top: 12%;
+    }
+</style>
+
+<body style="background: lightgray">
+<input  type="hidden" id="msg"  style="color: red" th:value="${msg}">
+<form th:action="@{/user/login/byEmail}" method="post">
+
+    <div style="text-align: center">
+        <h5>邮箱验证登录</h5>
+    </div>
+
+    <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="请输入您的验证邮箱" id="email" name="email" required
+               pattern="^\w+@\w+(\.com)">
+    </div>
+
+
+    <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="请输入验证码" id="code" name="code" required>
+        <div class="input-group-append">
+            <input type="submit" class="input-group-text" id="verification" onclick="verificationData()"
+                   value="点击获取验证码">
+        </div>
+    </div>
+
+
+    <div class="input-group">
+        <input type="submit" class="form-control btn-info" value="登录">
+    </div>
+
+    <a href="#"><small>没有接收到验证码，重新发送？</small></a>
+</form>
+
+</body>
+<script>
+    $(function () {
+      var msg = $("#msg").val();
+      if(msg === "验证码错误，请重新输入" || msg === "该邮箱还未注册"){
+          alert(msg);
+      }
+    });
+
+    function verificationData() {
+        var verification = $("#verification");
+        var email = $("#email").val();
+        if (emailCheck(email)) {
+            console.log("邮箱是: " + email);
+            var str = "welcome to china";
+            var reg = new RegExp("\d{8}")
+
+            setTime(verification);
+            getCode('/login/sendCode', email);
+        } else {//邮箱格式不对
+            alert("请输入有效的邮箱地址！")
+            return;
+        }
+
+
+    }
+
+    //60s倒计时实现逻辑
+    var countdown = 60;
+
+    function setTime(obj) {
+        if (countdown == 0) {
+            obj.prop('disabled', false);
+            obj.val("点击获取验证码");
+            countdown = 60;//60秒过后button上的文字初始化,计时器初始化;
+            return;
+        } else {
+            obj.prop('disabled', true);
+            obj.val("(" + countdown + "s)后重新发送");
+            countdown--;
+        }
+        setTimeout(function () {
+            setTime(obj)
+        }, 1000) //每1000毫秒执行一次
+    }
+
+    //发起获取验证码请求
+    function getCode(url, email) {
+        $.ajax({
+            url: url,
+            type: "GET",
+            data: {"email": email},
+            dataType: "JSON",
+            cache: false,
+            async: false,
+            success: function (data) {
+                //alert("验证吗以发送至您的邮箱，请注意查收！")
+            },
+            error: function () {
+                alert("网络连接失败，请重试！")
+            }
+        });
+    }
+
+
+    //验证邮箱
+    function emailCheck(emailAddr) {
+        if ((emailAddr == null) || (emailAddr.length < 2)) return false;
+
+        // 需出现'@',且不在首字符.
+        var aPos = emailAddr.indexOf("@", 1);
+
+        if (aPos < 0) {
+            return false;
+        }
+
+
+        // '@'后出现'.',且不紧跟其后.
+        if (emailAddr.indexOf(".", aPos + 2) < 0) {
+            return false;
+        }
+
+        return true;
+    }
+
+</script>
+
+</html>
